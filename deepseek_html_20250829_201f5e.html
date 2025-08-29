@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HoraMundi - Relógio Mundial | Horário em Tempo Real</title>
+    <meta name="description" content="Acompanhe o horário em tempo real em diferentes cidades ao redor do mundo com o HoraMundi. Relógio mundial, fusos horários e ferramentas úteis.">
+    <meta name="keywords" content="relógio mundial, horário global, fusos horários, tempo real, relógio online">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset e estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            color: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            position: relative;
+            width: 100%;
+        }
+        
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo-icon i {
+            font-size: 40px;
+            color: white;
+        }
+        
+        .logo-text {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #00b4db, #0083b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #c0c0c0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Relógio principal */
+        .main-clock {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+        
+        .clock-title {
+            font-size: 1.5rem;
+            color: #00b4db;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .time-display {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(to right, #00b4db, #0083b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 180, 219, 0.3);
+        }
+        
+        .date-display {
+            font-size: 1.5rem;
+            color: #c0c0c0;
+            margin-bottom: 20px;
+        }
+        
+        .location-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00b4db;
+            font-size: 1.1rem;
+        }
+        
+        .location-display i {
+            margin-right: 10px;
+        }
+        
+        /* AdSense banner */
+        .ad-banner {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: center;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            color: #a0a0a0;
+        }
+        
+        .ad-label {
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            color: #00b4db;
+        }
+        
+        /* Relógios mundiais */
+        .world-clocks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+            width: 100%;
+        }
+        
+        .clock-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .clock-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .city-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .city-flag {
+            width: 40px;
+            height: 30px;
+            margin-right: 15px;
+            border-radius: 3px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .city-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #00b4db;
+        }
+        
+        .time-zone {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            margin-bottom: 15px;
+        }
+        
+        .city-time {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            color: white;
+            margin: 10px 0;
+        }
+        
+        /* Ferramentas */
+        .tools-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #00b4db;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(to right, #00b4db, #0083b0);
+            border-radius: 3px;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .tool-card {
+            background: rgba(0, 180, 219, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 180, 219, 0.2);
+        }
+        
+        .tool-card:hover {
+            background: rgba(0, 180, 219, 0.2);
+            transform: translateY(-3px);
+        }
+        
+        .tool-icon {
+            font-size: 2.5rem;
+            color: #00b4db;
+            margin-bottom: 15px;
+        }
+        
+        .tool-card a {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            display: block;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+        
+        .tool-card a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            width: 100%;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+        .footer-links {
+            margin-top: 15px;
+        }
+        
+        .footer-links a {
+            color: #00b4db;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: opacity 0.3s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 0.8;
+        }
+        
+        /* Botão de tema */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(30deg) scale(1.1);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 2.5rem;
+            }
+            
+            .time-display {
+                font-size: 3rem;
+            }
+            
+            .world-clocks {
+                grid-template-columns: 1fr;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ad-banner {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-globe-americas"></i>
+                </div>
+                <h1 class="logo-text">HoraMundi</h1>
+            </div>
+            <p class="tagline">Acompanhe o tempo em diferentes cantos do mundo com nosso relógio global</p>
+        </header>
+        
+        <!-- Banner de anúncio -->
+        <div class="ad-banner">
+            <div class="ad-label">PUBIDADE</div>
+            <!-- Espaço para banner do AdSense -->
+            <div style="width: 100%; height: 90px; background: rgba(0, 180, 219, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <p>Espaço para banner do Google AdSense</p>
+            </div>
+        </div>
+        
+        <section class="main-clock">
+            <h2 class="clock-title">Seu Horário Local</h2>
+            <div class="time-display" id="current-time">00:00:00</div>
+            <div class="date-display" id="current-date">Segunda-feira, 1 de Janeiro de 2023</div>
+            <div class="location-display">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="user-location">Brasília, Brasil</span>
+            </div>
+        </section>
+        
+        <section class="world-clocks">
+            <div class="clock-card">
+                <div class="city-header">
+                    <div class="city-flag" style="background: linear-gradient(to bottom, #b22234 33%, #ffffff 33%, #ffffff 66%, #3c3b6e 66%)"></div>
+                    <h3 class="city-name">Nova York</h3>
+                </div>
+                <div class="time-zone">UTC-4 (EDT)</div>
+                <div class="city-time" id="new-york-time">00:00:00</div>
+            </div>
+            
+            <div class="clock-card">
+                <div class="city-header">
+                    <div class="city-flag" style="background: linear-gradient(to right, #012169 33%, #ffffff 33%, #ffffff 66%, #c8102e 66%)"></div>
+                    <h3 class="city-name">Londres</h3>
+                </div>
+                <div class="time-zone">UTC+1 (BST)</div>
+                <div class="city-time" id="london-time">00:00:00</div>
+            </div>
+            
+            <div class="clock-card">
+                <div class="city-header">
+                    <div class="city-flag" style="background: white; display: flex; align-items: center; justify-content: center;">
+                        <div style="width: 30px; height: 30px; background: #bc002d; border-radius: 50%;"></div>
+                    </div>
+                    <h3 class="city-name">Tóquio</h3>
+                </div>
+                <div class="time-zone">UTC+9 (JST)</div>
+                <div class="city-time" id="tokyo-time">00:00:00</div>
+            </div>
+            
+            <div class="clock-card">
+                <div class="city-header">
+                    <div class="city-flag" style="background: linear-gradient(to bottom, #012169 0%, #012169 33%, #e4002b 33%, #e4002b 66%, #ffffff 66%)"></div>
+                    <h3 class="city-name">Sydney</h3>
+                </div>
+                <div class="time-zone">UTC+10 (AEST)</div>
+                <div class="city-time" id="sydney-time">00:00:00</div>
+            </div>
+            
+            <div class="clock-card">
+                <div class="city-header">
+                    <div class="city-flag" style="background: linear-gradient(to bottom, #ff0000 33%, #ffffff 33%, #ffffff 66%, #009900 66%)"></div>
+                    <h3 class="city-name">Dubai</h3>
+                </div>
+                <div class="time-zone">UTC+4 (GST)</div>
+                <div class="city-time" id="dubai-time">00:00:00</div>
+            </div>
+            
+            <div class="clock-card">
+                <div class="city-header">
+                    <div class="city-flag" style="background: linear-gradient(to bottom, #ff9933 33%, #ffffff 33%, #ffffff 66%, #138808 66%)"></div>
+                    <h3 class="city-name">Nova Delhi</h3>
+                </div>
+                <div class="time-zone">UTC+5:30 (IST)</div>
+                <div class="city-time" id="delhi-time">00:00:00</div>
+            </div>
+        </section>
+        
+        <!-- Banner de anúncio -->
+        <div class="ad-banner">
+            <div class="ad-label">PUBIDADE</div>
+            <!-- Espaço para banner do AdSense -->
+            <div style="width: 100%; height: 90px; background: rgba(0, 180, 219, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <p>Espaço para banner do Google AdSense</p>
+            </div>
+        </div>
+        
+        <section class="tools-section">
+            <h2 class="section-title">Ferramentas de Tempo</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <i class="far fa-clock tool-icon"></i>
+                    <a href="#" target="_blank">Relógio Online</a>
+                </div>
+                <div class="tool-card">
+                    <i class="fas fa-globe-americas tool-icon"></i>
+                    <a href="#" target="_blank">Fusos Horários</a>
+                </div>
+                <div class="tool-card">
+                    <i class="fas fa-calculator tool-icon"></i>
+                    <a href="#" target="_blank">Calculadoras</a>
+                </div>
+                <div class="tool-card">
+                    <i class="far fa-calendar-alt tool-icon"></i>
+                    <a href="#" target="_blank">Calendários</a>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="footer">
+            <p>© 2023 HoraMundi - Todos os direitos reservados</p>
+            <p>Desenvolvido com paixão por amantes de relógios e viagens</p>
+            <div class="footer-links">
+                <a href="#">Política de Privacidade</a>
+                <a href="#">Termos de Uso</a>
+                <a href="#">Contato</a>
+            </div>
+        </footer>
+    </div>
+    
+    <button class="theme-toggle" id="theme-toggle">🌙</button>
+
+    <script>
+        // Funções para atualizar os relógios
+        function updateCurrentTime() {
+            const now = new Date();
+            
+            // Formatar hora
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            // Formatar data
+            const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            
+            const dayOfWeek = daysOfWeek[now.getDay()];
+            const day = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            
+            document.getElementById('current-date').textContent = `${dayOfWeek}, ${day} de ${month} de ${year}`;
+        }
+        
+        function updateWorldClocks() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            
+            // Nova York (UTC-4)
+            const newYorkTime = new Date(utc + (-4 * 3600000));
+            document.getElementById('new-york-time').textContent = formatTime(newYorkTime);
+            
+            // Londres (UTC+1)
+            const londonTime = new Date(utc + (1 * 3600000));
+            document.getElementById('london-time').textContent = formatTime(londonTime);
+            
+            // Tóquio (UTC+9)
+            const tokyoTime = new Date(utc + (9 * 3600000));
+            document.getElementById('tokyo-time').textContent = formatTime(tokyoTime);
+            
+            // Sydney (UTC+10)
+            const sydneyTime = new Date(utc + (10 * 3600000));
+            document.getElementById('sydney-time').textContent = formatTime(sydneyTime);
+            
+            // Dubai (UTC+4)
+            const dubaiTime = new Date(utc + (4 * 3600000));
+            document.getElementById('dubai-time').textContent = formatTime(dubaiTime);
+            
+            // Nova Delhi (UTC+5:30)
+            const delhiTime = new Date(utc + (5.5 * 3600000));
+            document.getElementById('delhi-time').textContent = formatTime(delhiTime);
+        }
+        
+        function formatTime(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+        
+        function updateAllClocks() {
+            updateCurrentTime();
+            updateWorldClocks();
+        }
+        
+        // Alternar tema claro/escuro
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('light-theme');
+            
+            if (document.body.classList.contains('light-theme')) {
+                document.body.style.background = "linear-gradient(135deg, #ece9e6 0%, #ffffff 100%)";
+                document.body.style.color = "#2d3748";
+                this.textContent = '🌙';
+            } else {
+                document.body.style.background = "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)";
+                document.body.style.color = "#f8f9fa";
+                this.textContent = '☀️';
+            }
+        });
+        
+        // Inicializar e atualizar a cada segundo
+        updateAllClocks();
+        setInterval(updateAllClocks, 1000);
+        
+        // Simular visualizações de anúncio (apenas para demonstração)
+        setInterval(function() {
+            // Simular impressões de anúncios
+            console.log("Visualização de anúncio simulada");
+        }, 30000);
+    </script>
+    
+    <!-- Código do Google AdSense (substitua pelo seu código real) -->
+    <!--
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-seu-codigo-aqui" crossorigin="anonymous"></script>
+    -->
+</body>
+</html>
